@@ -1,0 +1,219 @@
+# Dockerfile has been added in all micro-services, you need to dockerize all micro-services and add docker-compose.yml file
+version: '3.3'
+services:
+#  eureka-server:
+#    build:
+##       dockerfile: Dockerfile
+#       context: ./netflix-eureka-naming-server
+#    container_name: eureka-container
+#    restart: always
+#    network_mode: "host"
+#    hostname: localhost
+#    ports:
+#      - 8761:8761
+#  zuul-api:
+##    build: zuul-api/
+#    build:
+##      dockerfile: Dockerfile
+#       context: ./netflix-zuul-api-gateway-server
+#    container_name: zuul-container
+#    depends_on:
+#      - eureka-server
+#    restart: always
+#    network_mode: "host"
+#    hostname: localhost
+#    ports:
+#      - 8765:8765
+  mysql:
+    image: mysql
+    ports:
+      - 3306:3306
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: userDb
+      MYSQL_PASSWORD: root123
+      MYSQL_USER: app-root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - $HOME/data/datasql:/var/lib/mysql
+    network_mode: "host"
+    hostname: localhost
+    restart: always
+
+  authentication-service:
+#   build: authentication-service/
+    build:
+       dockerfile: Dockerfile
+       context: ./UserAuthentication-Service
+    container_name: authentication-container
+    environment:
+      MYSQL_DATABASE: userDb
+      MYSQL_PASSWORD: root123
+      MYSQL_USER: app-root
+      MYSQL_HOST: localhost
+    network_mode: "host"
+    hostname: localhost
+    depends_on:
+      - mysql
+#      - eureka-server
+    restart: always
+    ports:
+      - 8089:8089
+
+  mongo:
+    image: mongo
+    container_name: mongo-container
+    restart: always
+    network_mode: "host"
+    hostname: localhost
+    ports:
+      - 27017:27017
+    volumes:
+      - $HOME/mongo:/data/db
+      
+  category-service:
+#    build: category-service/
+    build:
+       dockerfile: Dockerfile
+       context: ./CategoryService
+    container_name: category-container
+    depends_on:
+#      - eureka-server
+      - mongo
+    restart: always
+    network_mode: "host"
+    hostname: localhost
+    ports:
+      - 8083:8083
+      
+  user-service:
+#    build: user-service/
+    build:
+       dockerfile: Dockerfile
+       context: ./UserService
+    container_name: user-container
+    depends_on:
+#      - eureka-server
+      - mongo
+    restart: always
+    network_mode: "host"
+    hostname: localhost
+    ports:
+      - 8080:8080
+
+  note-service:
+#    build: note-service/
+    build:
+       dockerfile: Dockerfile
+       context: ./NoteService
+    container_name: note-container
+    depends_on:
+#      - eureka-server
+      - mongo
+    restart: always
+    network_mode: "host"
+    hostname: localhost
+    ports:
+      - 8082:8082
+      
+  reminder-service:
+#    build: reminder-service/
+    build:
+       dockerfile: Dockerfile
+       context: ./ReminderService
+    container_name: reminder-container
+    depends_on:
+#      - eureka-server
+      - mongo
+    restart: always
+    network_mode: "host"
+    hostname: localhost
+    ports:
+      - 8081:8081
+
+#version: '3.3'
+#services:
+#  user-auth:
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./UserAuthentication-Service
+#    container_name: userauthenticationservice-docker
+#    restart: always
+#    network_mode: host
+#    ports:
+#      - "8089:8089"
+#    depends_on:
+#      - mysql-service
+#
+#  reminder-service:
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./ReminderService
+#    container_name: reminderservice-docker
+#    restart: always
+#    network_mode: host
+#    ports:
+#        - "8081:8081"
+#    depends_on:
+#        - mongo-service
+#
+#  note-service:
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./NoteService
+#    container_name: noteservice-docker
+#    restart: always
+#    network_mode: host
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - mongo-service
+#
+#  category-service:
+#     build:
+#       dockerfile: Dockerfile
+#       context: ./CategoryService
+#     container_name: categoryservice-docker
+#     restart: always
+#     network_mode: host
+#     ports:
+#       - "8083:8083"
+#     depends_on:
+#       - mongo-service
+#
+#  user-service:
+#     build:
+#       dockerfile: Dockerfile
+#       context: ./UserService
+#     container_name: userservice-docker
+#     restart: always
+#     network_mode: host
+#     ports:
+#       - "8080:8080"
+#     depends_on:
+#       - mongo-service
+#
+#  mysql-service:
+#    image: mysql:latest
+#    restart: always
+#    network_mode: host
+#    ports:
+#      - "3306:3306"
+#    container_name: mysql-docker1
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root123
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: root123
+#      MYSQL_DATABASE: userDb
+#
+#  mongo-service:
+#      image: mongo:latest
+#      command: mongod --port 27018
+#      network_mode: host
+#      restart: always
+#      volumes:
+#        - /data/dump:/data/db
+#      ports:
+#        - "27017:27018"
+#      container_name: mongo-docker

@@ -1,0 +1,75 @@
+Access Spring Boot
+
+step1 -> check docker file  in  spring boot application.  
+
+Step 2 - > in STS, maven build -> package
+Check whehter filename..jar is created under targer folder
+
+Step 2
+
+in Command Prompt
+
+Get inside the main folder of your project. 
+
+Step 3
+
+Check whether dockerfile is available in main project
+
+step 4
+
+type the below
+
+docker build  -t myimage -f dockerfile  .
+
+meaning is
+myimage -->  any name of the docker image for your application
+
+. --> current folder where dockerfile is stored
+
+step 5
+ docker images
+
+--to check whether myimage is created or not
+
+step 6
+  docker run -p8080:8080 myimage
+
+now spring boot will run
+
+step 7
+ in web browser
+ http://localhost:8080/cgi/home 
+ 
+(the above controller is developed in spring boot)
+
+
+
+
+
+*********************************
+To access mongodb
+
+sudo docker run --name mymango -d 
+ -p27023:27017 mongo
+
+suod docker exec -it name bash
+
+show dbs
+use notesdb
+
+**************************************
+How to use docker - compose
+
+
+docker-compose.yml in parent application of microservices
+
+docker file in all micro service applications
+
+get into parent project foler in command prompt
+
+docker-compose build
+
+docker-compose up 
+
+which will run all the micorsevices under this parent
+ 
